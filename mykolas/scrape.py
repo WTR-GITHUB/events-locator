@@ -31,6 +31,9 @@ def scrape_website(url):
         for div_element in main_div:
             title = div_element.xpath(".//div/div[2]/div[1]/a/span")
             locations = div_element.xpath(".//div/div[2]/div[2]/a")
+            start_date_info = div_element.xpath(".//div/meta[2]/@content")[0]
+            end_date_info = div_element.xpath(".//div/meta[1]/@content")[0]
+            url_to_event = div_element.xpath(".//div/meta[2]/@content")[1]
             if title:
                 for element in title:
                     print("Title:", element.text)
@@ -41,6 +44,12 @@ def scrape_website(url):
                     print("Location:", location.text)
             else:
                 print("Location not found")
+            if start_date_info:
+                print("Start date:", start_date_info)
+            if end_date_info:
+                print("End date:", end_date_info)
+            if url_to_event:
+                print("Link:", url_to_event)
 
 
 def save_to_database(title, content):
