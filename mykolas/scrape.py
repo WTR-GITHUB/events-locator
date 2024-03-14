@@ -1,13 +1,12 @@
 import requests
-from bs4 import BeautifulSoup
 from sqlalchemy import create_engine, Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from lxml import html
 
 Base = declarative_base()
 
 
-# Define your data model
 class ScrapedData(Base):
     __tablename__ = "scraped_data"
     id = Column(Integer, primary_key=True)
@@ -17,36 +16,32 @@ class ScrapedData(Base):
     link = Column(String)
 
 
-# Set up your database connection
 engine = create_engine("sqlite:///scraped_data.db")
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
-# Function to scrape data
 def scrape_website(url):
     response = requests.get(url)
     if response.status_code == 200:
-        soup = BeautifulSoup(response.content, "html.parser")
-        # Scraping logic here
-        # For example:
-        titles = soup.find_all("h1")
-        contents = soup.find_all("p")
-        for title, content in zip(titles, contents):
-            save_to_database(title.text, content.text)
-    else:
-        print("Failed to fetch the webpage.")
+        tree = html.fromstring(response.content)
+        elements = tree.xpath(
+            '//*[@id="block-list"]/div/div[1]/div/div[2]/div[1]/a/span'
+        )
+        if elements:
+            for element in elements:
+                print(element.text)
+        else:
+            print("Element not found")
 
 
-# Function to save data into database
 def save_to_database(title, content):
     data = ScrapedData(title=title, content=content)
     session.add(data)
     session.commit()
 
 
-# Example usage
 if __name__ == "__main__":
-    url = "https://example.com"
+    url = "https://renginiai.kasvyksta.lt/vilnius"
     scrape_website(url)
