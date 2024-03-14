@@ -1,0 +1,11 @@
+# import socket
+# hostname = socket.gethostname()
+# IPAddr = socket.gethostbyname(hostname)
+ 
+# print("Your Computer Name is:" + hostname)
+# print("Your Computer IP Address is:" + IPAddr)
+
+from requests import get
+
+response = get('https://httpbin.org/ip')
+print(response.text)
