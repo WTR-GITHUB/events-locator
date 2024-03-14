@@ -26,14 +26,21 @@ def scrape_website(url):
     response = requests.get(url)
     if response.status_code == 200:
         tree = html.fromstring(response.content)
-        elements = tree.xpath(
-            '//*[@id="block-list"]/div/div[1]/div/div[2]/div[1]/a/span'
-        )
-        if elements:
-            for element in elements:
-                print(element.text)
-        else:
-            print("Element not found")
+        main_div = tree.xpath('//*[@id="block-list"]/div/div')
+
+        for div_element in main_div:
+            title = div_element.xpath(".//div/div[2]/div[1]/a/span")
+            locations = div_element.xpath(".//div/div[2]/div[2]/a")
+            if title:
+                for element in title:
+                    print("Title:", element.text)
+            else:
+                print("Title not found")
+            if locations:
+                for location in locations:
+                    print("Location:", location.text)
+            else:
+                print("Location not found")
 
 
 def save_to_database(title, content):
