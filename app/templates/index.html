@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<span class="title">
+    <h1>{% block title %}Your IP is: {{ user_ip }} </h1>
+    <h1>Your location: {{ user_location }} {% endblock %} </h1>
+</span>
+<div class="content">
+
+    <h2>Events: </h2>
+</div>
+{% endblock %}
