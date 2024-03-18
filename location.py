@@ -1,11 +1,17 @@
 from requests import get
 
-response = get('https://httpbin.org/ip')
-r = response.json()
+def get_location():
+    response = get("https://httpbin.org/ip")
+    r = response.json()
+    # print(r["origin"])
 
-loc = get(f"https://ipapi.co/{r['origin']}/json/")
-print (loc.json())
-location_data = loc.json()
-city = location_data["city"]
-latitude = location_data["latitude"]
-longitude = location_data["longitude"]
+    loc = get(f"https://ipapi.co/{r['origin']}/json/")  # 193.219.65.21
+    # print(loc.json())
+    location_data = loc.json()
+    city = location_data["city"]
+    latitude = location_data["latitude"]
+    longitude = location_data["longitude"]
+
+    print(city)
+    print(latitude)
+    print(longitude)
