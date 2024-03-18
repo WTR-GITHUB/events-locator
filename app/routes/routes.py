@@ -1,5 +1,5 @@
 from flask import render_template
-from app.main import bp
+from app.routes import bp
 from requests import get
 
 
