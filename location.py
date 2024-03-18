@@ -15,3 +15,5 @@ def get_location():
     print(city)
     print(latitude)
     print(longitude)
+
+    return city, latitude, longitude
