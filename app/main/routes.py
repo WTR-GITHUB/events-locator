@@ -1,6 +1,12 @@
 from flask import render_template
 from app.main import bp
 from requests import get
+import json
+from app.models.city import City
+from app.extensions import db
+
+
+
 
 
 @bp.route("/")

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<span class="title">
+    <h1>{% block title %} Cities {% endblock %}</h1>
+</span>
+<div class="content">
+    {% if all_cities %}
+    {% for city in all_cities %}
+    <hr>
+    <p>{{city.title }} <br></p>
+    <p>{{city.latitude }} <br></p>
+    <p>{{city.longitude }} </p>
+    {% endfor %}
+    {% endif %}
+    <hr>
+</div>
+{% endblock %}
