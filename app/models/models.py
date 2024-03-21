@@ -1,18 +1,62 @@
+import math
+from typing import List
+from app import db
 
 
+class City(db.Model):
+    __tablename__ = "city"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(40))
+    latitude = db.Column(db.DECIMAL(8, 6))
+    longitude = db.Column(db.DECIMAL(9, 6))
+
+    @staticmethod
+    def get_unique_city_ids():
+        unique_ids = City.query.with_entities(City.city_id).distinct().all()
+        return [id[0] for id in unique_ids]
+
+    @staticmethod
+    def get_column_values():
+        unique_ids = City.get_unique_city_ids()
+        data = (
+            City.query.filter(City.id.in_(unique_ids))
+            .with_entities(City.latitude, City.longitude)
+            .all()
+        )
+        return data
 
 
-class ScrapedData(db.Model):
-    __tablename__ = "scraped_data"
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    location = Column(String)
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
-    link = Column(String)
+class Category(db.Model):
+    __tablename__ = "category"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(40))
 
 
-class ScrapedCategories(db.Model):
-    __tablename__ = "scraped_categories"
-    id = Column(Integer, primary_key=True)
-    category = Column(String)
+class ScrapeData(db.Model):
+    __tablename__ = "scrape_data"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(140))
+    start_date = db.Column(db.String(12))
+    end_date = db.Column(db.String(12))
+    link = db.Column(db.String(100))
+    city_id = db.Column(db.Integer, db.ForeignKey("city.id"))
+    city = db.relationship("City")
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
+    category = db.relationship("Category")
+
+
+class ShortestDistance:
+    def __init__(self, lat_curent: float, lng_curent: float) -> None:
+        self.lat_curent = lat_curent
+        self.lng_curent = lng_curent
+
+    def calculate_destances(self, lat: float, lng: float) -> float:
+        return math.sqrt((lat - self.lat_curent) ** 2 + (lng - self.lng_curent) ** 2)
+
+    def find_shortest_distance(self, city_cordinates: List[float]):
+        distances = []
+        for coord in city_cordinates:
+            lat, lng = coord
+            distance = self.calculate_destances(lat=lat, lng=lng)
+            distances.append(distance)
+        return sorted(distances)

@@ -1,6 +1,8 @@
 from flask import render_template
-from app.routes import bp
 from requests import get
+from app.routes import bp
+from app.models.models import City, ShortestDistance
+
 
 
 @bp.route("/")
@@ -12,5 +14,27 @@ def index():
     city_json = loc.json()
     city = city_json["city"]
     print(city)
+    latitude = city_json["latitude"]
+    longitude = city_json["longitude"]
 
-    return render_template("index.html", user_location=city, user_ip=ip)
+    distances = ShortestDistance(lat_curent=latitude, lng_curent=longitude)
+
+    city_data = City.query.with_entities(
+        City.city_name, City.latitude, City.longitude
+    ).all()
+    distances_with_names = []
+    for city_info in city_data:
+        city_name, lat, lng = city_info
+        distance = distances.calculate_distance(lat, lng)
+        distances_with_names.append((city_name, distance))
+
+    distances_with_names.sort(key=lambda x: x[1])
+    return render_template(
+        "index.html",
+        user_location=city,
+        user_ip=ip,
+        latitude=latitude,
+        longitude=longitude,
+        distances_with_names=distances_with_names
+    )
+
