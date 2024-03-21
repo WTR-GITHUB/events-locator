@@ -6,9 +6,9 @@ from app import db
 class City(db.Model):
     __tablename__ = "city"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(40))
-    latitude = db.Column(db.DECIMAL(8, 6))
-    longitude = db.Column(db.DECIMAL(9, 6))
+    city_name = db.Column(db.String(40))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
     @staticmethod
     def get_unique_city_ids():
@@ -50,13 +50,19 @@ class ShortestDistance:
         self.lat_curent = lat_curent
         self.lng_curent = lng_curent
 
-    def calculate_destances(self, lat: float, lng: float) -> float:
-        return math.sqrt((lat - self.lat_curent) ** 2 + (lng - self.lng_curent) ** 2)
+    def calculate_distances(self, lat: float, lng: float) -> float:
+        return round(
+            math.sqrt(
+                (float(lat) * 111.32 - self.lat_curent * 111.32) ** 2
+                + (float(lng) * 111.32 - self.lng_curent * 111.32) ** 2
+            ),
+            2,
+        )
 
     def find_shortest_distance(self, city_cordinates: List[float]):
         distances = []
         for coord in city_cordinates:
             lat, lng = coord
-            distance = self.calculate_destances(lat=lat, lng=lng)
+            distance = self.calculate_distances(lat=lat, lng=lng)
             distances.append(distance)
         return sorted(distances)
