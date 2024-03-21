@@ -1,9 +1,6 @@
 import math
 from typing import List
-
-
 from app.extensions import db
-
 
 class City(db.Model):
     __tablename__ = 'city'
@@ -24,17 +21,17 @@ class City(db.Model):
         return data
 
 class ShortestDistance:
-    def __init__(self, lat_curent: float, lng_curent: float) -> None:
-        self.lat_curent = lat_curent
-        self.lng_curent = lng_curent
+    def __init__(self, lat_current: float, lng_current: float) -> None:
+        self.lat_current = lat_current
+        self.lng_current = lng_current
 
-    def calculate_destances(self, lat: float, lng: float)-> float:
-        return math.sqrt((lat - self.lat_curent) ** 2 + (lng - self.lng_curent) ** 2)
+    def calculate_distance(self, lat: float, lng: float) -> float:
+        return math.sqrt((lat - self.lat_current) ** 2 + (lng - self.lng_current) ** 2)
 
-    def find_shortest_distance(self, city_cordinates:List[float]):
+    def find_shortest_distance(self, city_coordinates: List[float]) -> float:
         distances = []
-        for coord in city_cordinates:
+        for coord in city_coordinates:
             lat, lng = coord
-            distance = self.calculate_destances(lat=lat, lng=lng)
+            distance = self.calculate_distance(lat=lat, lng=lng)
             distances.append(distance)
-        return sorted(distances)
+        return min(distances)
