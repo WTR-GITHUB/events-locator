@@ -9,3 +9,10 @@ class Config:
         "DATABASE_URI"
     ) or "sqlite:///" + os.path.join(basedir, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+# <ul>
+#         {% for item in distance_with_names %}
+#         <li>{{ item.city_name }}: {{ item.distance }} {% endblock %}</li>
+#         {% endfor %}
+#     </ul>

@@ -17,7 +17,7 @@ from app.models.city import City
 #             title=city_title, latitude=city_latitude, longitude=city_longitude
 #         )
 #         db.session.add(location)
-#         print(f"weeee{location.title}")
+#
 #         print(location.latitude)
 #         print("--")
 #         db.session.commit()
