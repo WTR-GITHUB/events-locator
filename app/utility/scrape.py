@@ -89,23 +89,3 @@ def scrape_categories(url):
             categories.append(category)
             save_category_to_database(category)
     return categories
-
-def get_or_create_city(city_name):
-    city = session.query(City).filter_by(city_name=city_name).first()
-    return city
-
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-        ScrapeData.query.delete()
-        Category.query.delete()
-
-        url_for_categories_and_cities = "https://renginiai.kasvyksta.lt/"
-        scraped_categories = scrape_categories(url_for_categories_and_cities)
-        cities_with_events = scrape_cities(url_for_categories_and_cities)
-        for city in cities_with_events:
-            for category in scraped_categories:
-                url = f"https://renginiai.kasvyksta.lt/{city.lower()}/{category}"
-                print(url)
-                print(get_or_create_city(city))
-                scrape_events(url=url, city=city, category=category)
