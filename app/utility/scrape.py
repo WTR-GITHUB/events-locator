@@ -1,7 +1,7 @@
 import datetime
 import html
 import requests
-from app.models.models import ScrapeData, Category
+from app.models.models import ScrapeData, Category, City
 from app.extensions import db
 
 def scrape_cities(url):
@@ -90,6 +90,9 @@ def scrape_categories(url):
             save_category_to_database(category)
     return categories
 
+def get_or_create_city(city_name):
+    city = session.query(City).filter_by(city_name=city_name).first()
+    return city
 
 if __name__ == "__main__":
     with app.app_context():
@@ -104,4 +107,5 @@ if __name__ == "__main__":
             for category in scraped_categories:
                 url = f"https://renginiai.kasvyksta.lt/{city.lower()}/{category}"
                 print(url)
+                print(get_or_create_city(city))
                 scrape_events(url=url, city=city, category=category)

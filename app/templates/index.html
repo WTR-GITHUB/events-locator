@@ -4,17 +4,8 @@
 <span class="title">
     <h1>{% block title %}Your IP is: {{ user_ip }} </h1>
     <h1>Your location: {{ user_location }} </h1>
-    <h1>Your cooridinates: Latitude {{ latitude }}, Longitude {{ longitude}} </h1>
-    <h2>Nearest cities:</h2>
-    <ul>
-
-        {% for item in distances_with_names %}
-
-        <li>{{ item[0]}}: {{ item[1]}} km </li>
-        {% endfor %}
-
-    </ul>
-    {% endblock %}
+    <h1>Your cooridinates: Latitude {{ latitude }}, Longitude {{ longitude}} {% endblock %} </h1>
+    
 </span>
 <div class="content">
 
