@@ -9,24 +9,24 @@ from app import scrape_and_update
 
 @bp.route("/setup")
 def setup_city_data():
-    try:
-        scrape_and_update()
-        with open("lt.json", encoding="utf8") as f:
-            data = json.load(f)
-            for city in data:
-                city_title = city["city"]
-                print(city_title)
-                city_latitude = city["lat"]
-                print(city_latitude)
-                city_longitude = city["lng"]
-                location = City(
-                    city_name=city_title, latitude=city_latitude, longitude=city_longitude
-                )
-                db.session.add(location)
-                db.session.commit()
-        return render_template('setup_success.html')
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # try:
+        # scrape_and_update()
+    with open("lt.json", encoding="utf8") as f:
+        data = json.load(f)
+        for city in data:
+            city_title = city["city"]
+            print(city_title)
+            city_latitude = city["lat"]
+            print(city_latitude)
+            city_longitude = city["lng"]
+            location = City(
+                city_name=city_title, latitude=city_latitude, longitude=city_longitude
+            )
+            db.session.add(location)
+            db.session.commit()
+    return render_template('setup_success.html')
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @bp.route("/")
 def index():
