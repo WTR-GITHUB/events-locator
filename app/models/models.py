@@ -46,6 +46,7 @@ class ScrapeData(db.Model):
 
 
 class ShortestDistance:
+    CONSTANT = 111.32 # This is a constant to convert latitude and logitude to km
     def __init__(self, lat_curent: float, lng_curent: float) -> None:
         self.lat_curent = lat_curent
         self.lng_curent = lng_curent
@@ -53,8 +54,8 @@ class ShortestDistance:
     def calculate_distances(self, lat: float, lng: float) -> float:
         return round(
             math.sqrt(
-                (float(lat) * 111.32 - self.lat_curent * 111.32) ** 2
-                + (float(lng) * 111.32 - self.lng_curent * 111.32) ** 2
+                (float(lat) * self.CONSTANT - self.lat_curent * self.CONSTANT) ** 2
+                + (float(lng) * self.CONSTANT - self.lng_curent * self.CONSTANT) ** 2
             ),
             2,
         )
