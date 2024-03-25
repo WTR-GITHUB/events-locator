@@ -3,3 +3,4 @@
 .event
 **/__pycache__/
 *.db
+.flask
