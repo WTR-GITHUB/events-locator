@@ -13,6 +13,7 @@
         {% for item in distances_with_names %}
 
         <li>{{ item[0]}}: {{ item[1]}} km </li>
+
         {% endfor %}
 
     </ul>
@@ -21,5 +22,13 @@
 <div class="content">
 
     <h2>Events: </h2>
+    {% for event in city_events %}
+
+    <li>Event {{event.title}} will start {{event.start_date}}, link: {{event.link}}</li>
+
+    {% endfor %}
+
+
+
 </div>
 {% endblock %}

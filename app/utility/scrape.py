@@ -1,9 +1,9 @@
-import datetime
-import html
+from app import db
+from datetime import datetime
 import requests
-from app.models.models import ScrapeData, Category
-from app.extensions import db
+from app.models.models import ScrapeData, Category, City
 from lxml import html
+
 
 def scrape_cities(url):
     response = requests.get(url)
@@ -57,26 +57,39 @@ def scrape_events(url, city, category):
             )
 
             if title and location and start_date and end_date and url_to_event:
+                city_obj = City.query.filter_by(city_name=city).first()
+                category_obj = Category.query.filter_by(title=category).first()
+
+                if city_obj is None:
+                    print(f"City '{city}' not found in the database.")
+                    continue
+
+                if category_obj is None:
+                    print(f"Category '{category}' not found in the database.")
+                    continue
+
                 data = ScrapeData(
                     title=title,
-                    city_id=location,
+                    city_id=city_obj.id,
                     start_date=start_date,
                     end_date=end_date,
                     link=url_to_event,
-                    city=city,
-                    category=category,
+                    city=city_obj,
+                    category_id=category_obj.id,  # Include category_id here
+                    category=category_obj,
                 )
-                # print(title)
                 db.session.add(data)
                 db.session.commit()
             else:
                 continue
 
 
-def save_category_to_database(category):
-    data = Category(category=category)
-    db.session.add(data)
-    db.session.commit()
+def save_category_to_database(category_title):
+    existing_category = Category.query.filter_by(title=category_title).first()
+    if existing_category is None:
+        data = Category(title=category_title)
+        db.session.add(data)
+        db.session.commit()
 
 
 def scrape_categories(url):
@@ -86,10 +99,11 @@ def scrape_categories(url):
         tree = html.fromstring(response.content)
         main_div = tree.xpath('//*[@id="static-filter"]/div[2]/ul/li')
         for div_element in main_div:
-            category = div_element.xpath(".//a/@class")[0]
-            categories.append(category)
-            save_category_to_database(category)
+            category_title = div_element.xpath(".//a/text()")[0].strip()
+            categories.append(category_title)
+            save_category_to_database(category_title)
     return categories
+
 
 def scrape_and_update():
     ScrapeData.query.delete()
@@ -103,6 +117,7 @@ def scrape_and_update():
             url = f"https://renginiai.kasvyksta.lt/{city.lower()}/{category}"
             print(url)
             scrape_events(url=url, city=city, category=category)
+
 
 if __name__ == "__main__":
     scrape_and_update()
