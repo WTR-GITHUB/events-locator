@@ -3,6 +3,7 @@ import html
 import requests
 from app.models.models import ScrapeData, Category
 from app.extensions import db
+from lxml import html
 
 def scrape_cities(url):
     response = requests.get(url)
@@ -89,3 +90,19 @@ def scrape_categories(url):
             categories.append(category)
             save_category_to_database(category)
     return categories
+
+def scrape_and_update():
+    ScrapeData.query.delete()
+    Category.query.delete()
+
+    url_for_categories_and_cities = "https://renginiai.kasvyksta.lt/"
+    scraped_categories = scrape_categories(url_for_categories_and_cities)
+    cities_with_events = scrape_cities(url_for_categories_and_cities)
+    for city in cities_with_events:
+        for category in scraped_categories:
+            url = f"https://renginiai.kasvyksta.lt/{city.lower()}/{category}"
+            print(url)
+            scrape_events(url=url, city=city, category=category)
+
+if __name__ == "__main__":
+    scrape_and_update()
