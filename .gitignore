@@ -1,8 +1,6 @@
 .venv
-<<<<<<< Updated upstream
-=======
 .Dockerfile
-
-
-
->>>>>>> Stashed changes
+.event
+**/__pycache__/
+*.db
+.flask
