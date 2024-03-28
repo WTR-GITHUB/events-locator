@@ -1,6 +1,5 @@
 .venv
 .Dockerfile
+.event
 **/__pycache__/
-
-
-
+*.db
