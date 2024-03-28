@@ -2,7 +2,10 @@ from app import db
 from datetime import datetime
 import requests
 from app.models.models import ScrapeData, Category, City
+from app.extensions import db
 from lxml import html
+from datetime import datetime
+
 
 
 def scrape_cities(url):
@@ -14,7 +17,12 @@ def scrape_cities(url):
         return cities
 
 
-def scrape_events(url, city, category):
+def scrape_events(url, city_name, category_title):
+    city_id = City.query.filter_by(city_name=city_name).first()
+    if city_id is None:
+        print(f"City '{city_name}' not found in the database.")
+        return
+
     response = requests.get(url)
     if (
         response.status_code == 200
@@ -57,26 +65,20 @@ def scrape_events(url, city, category):
             )
 
             if title and location and start_date and end_date and url_to_event:
-                city_obj = City.query.filter_by(city_name=city).first()
-                category_obj = Category.query.filter_by(title=category).first()
-
-                if city_obj is None:
-                    print(f"City '{city}' not found in the database.")
-                    continue
-
-                if category_obj is None:
-                    print(f"Category '{category}' not found in the database.")
+                category = Category.query.filter_by(title=category_title).first()
+                if category is None:
+                    print(f"Category '{category_title}' not found in the database.")
                     continue
 
                 data = ScrapeData(
                     title=title,
-                    city_id=city_obj.id,
                     start_date=start_date,
                     end_date=end_date,
                     link=url_to_event,
-                    city=city_obj,
-                    category_id=category_obj.id,  # Include category_id here
-                    category=category_obj,
+                    city_id=city_id,
+                    city=city_name,
+                    category_id=category,
+                    category=category,
                 )
                 db.session.add(data)
                 db.session.commit()
@@ -116,7 +118,8 @@ def scrape_and_update():
         for category in scraped_categories:
             url = f"https://renginiai.kasvyksta.lt/{city.lower()}/{category}"
             print(url)
-            scrape_events(url=url, city=city, category=category)
+            scrape_events(url=url, city_name=city, category_title=category)
+
 
 
 if __name__ == "__main__":
