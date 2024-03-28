@@ -17,8 +17,8 @@ def scrape_cities(url):
 
 
 def scrape_events(url, city_name, category_title):
-    city = City.query.filter_by(city_name=city_name).first()
-    if city is None:
+    city_id = City.query.filter_by(city_name=city_name).first()
+    if city_id is None:
         print(f"City '{city_name}' not found in the database.")
         return
 
@@ -71,11 +71,12 @@ def scrape_events(url, city_name, category_title):
 
                 data = ScrapeData(
                     title=title,
-                    city_id=city.id,
                     start_date=start_date,
                     end_date=end_date,
                     link=url_to_event,
-                    city=city,
+                    city_id=city_id,
+                    city=city_name,
+                    category_id=category,
                     category=category,
                 )
                 # print(title)
