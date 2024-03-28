@@ -9,18 +9,18 @@ from app import scrape_and_update
 
 @bp.route("/setup")
 def setup_city_data():
-    scraped_city = ScrapeData(
-        title="Wheeeeee",
-        start_date="123555-5435-345",
-        end_date="234777",
-        link="www.ok.lt",
-        city_id=2,
-        category_id=2,
-    )
-    db.session.add(scraped_city)
-    db.session.commit()
+    # scraped_city = ScrapeData(
+    #     title="Wheeeeee",
+    #     start_date="123555-5435-345",
+    #     end_date="234777",
+    #     link="www.ok.lt",
+    #     city_id=2,
+    #     category_id=2,
+    # )
+    # db.session.add(scraped_city)
+    # db.session.commit()
+    scrape_and_update()
 
-    # scrape_and_update()
     with open("lt.json", encoding="utf8") as f:
         data = json.load(f)
         for city in data:
@@ -47,17 +47,13 @@ def index():
         response = get("https://httpbin.org/ip")
         r = response.json()
         ip = r["origin"]
-
+        
         loc = get(f"https://ipapi.co/{r['origin']}/json/")
         city_json = loc.json()
-        city = city_json.get("city", "Kaunas")  # Get city or use "Kaunas" as default
-        latitude = city_json.get(
-            "latitude", 54.9038
-        )  # Get latitude or use default value
-        longitude = city_json.get(
-            "longitude", 23.8924
-        )  # Get longitude or use default value
-
+        city = city_json.get("city", "Kaunas")
+        latitude = city_json.get("latitude", 54.9038)
+        longitude = city_json.get("longitude", 23.8924)
+        
     except KeyError as e:
         print(f"KeyError occurred: {e}")
         city = "Kaunas"
@@ -69,9 +65,15 @@ def index():
     city_data = City.query.with_entities(
         City.city_name, City.latitude, City.longitude
     ).limit(10)
+<<<<<<< HEAD
 
     distances_with_names = []
 
+=======
+    
+    distances_with_names = []
+    
+>>>>>>> flask_page
     for city_info in city_data:
         city_name, lat, lng = city_info
         distance = distances.calculate_distances(lat, lng)
