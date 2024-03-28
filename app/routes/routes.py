@@ -43,22 +43,35 @@ def setup_city_data():
 
 @bp.route("/")
 def index():
-    response = get("https://httpbin.org/ip")
-    r = response.json()
-    ip = r["origin"]
-    loc = get(f"https://ipapi.co/{r['origin']}/json/")
-    city_json = loc.json()
-    city = city_json["city"]
-    print(city)
-    latitude = city_json["latitude"]
-    longitude = city_json["longitude"]
+    try:
+        response = get("https://httpbin.org/ip")
+        r = response.json()
+        ip = r["origin"]
+
+        loc = get(f"https://ipapi.co/{r['origin']}/json/")
+        city_json = loc.json()
+        city = city_json.get("city", "Kaunas")  # Get city or use "Kaunas" as default
+        latitude = city_json.get(
+            "latitude", 54.9038
+        )  # Get latitude or use default value
+        longitude = city_json.get(
+            "longitude", 23.8924
+        )  # Get longitude or use default value
+
+    except KeyError as e:
+        print(f"KeyError occurred: {e}")
+        city = "Kaunas"
+        latitude = 54.9038
+        longitude = 23.8924
 
     distances = ShortestDistance(lat_curent=latitude, lng_curent=longitude)
 
     city_data = City.query.with_entities(
         City.city_name, City.latitude, City.longitude
     ).limit(10)
+
     distances_with_names = []
+
     for city_info in city_data:
         city_name, lat, lng = city_info
         distance = distances.calculate_distances(lat, lng)
@@ -68,9 +81,9 @@ def index():
     print(distances_with_names)
 
     try:
-        all_cites = City.query.all()
+        all_cities = City.query.all()
     except:
-        all_cites = []
+        all_cities = []
 
     return render_template(
         "index.html",
@@ -79,5 +92,5 @@ def index():
         latitude=latitude,
         longitude=longitude,
         distances_with_names=distances_with_names,
-        all_cites=all_cites,
+        all_cities=all_cities,
     )

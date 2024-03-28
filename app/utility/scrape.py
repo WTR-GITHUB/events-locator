@@ -4,6 +4,7 @@ import requests
 from app.models.models import ScrapeData, Category, City
 from app.extensions import db
 
+
 def scrape_cities(url):
     response = requests.get(url)
     if response.status_code == 200:
