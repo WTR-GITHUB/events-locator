@@ -47,13 +47,17 @@ def index():
         response = get("https://httpbin.org/ip")
         r = response.json()
         ip = r["origin"]
-        
+
         loc = get(f"https://ipapi.co/{r['origin']}/json/")
         city_json = loc.json()
-        city = city_json.get("city", "Kaunas")
-        latitude = city_json.get("latitude", 54.9038)
-        longitude = city_json.get("longitude", 23.8924)
-        
+        city = city_json.get("city", "Kaunas")  # Get city or use "Kaunas" as default
+        latitude = city_json.get(
+            "latitude", 54.9038
+        )  # Get latitude or use default value
+        longitude = city_json.get(
+            "longitude", 23.8924
+        )  # Get longitude or use default value
+
     except KeyError as e:
         print(f"KeyError occurred: {e}")
         city = "Kaunas"
@@ -65,9 +69,9 @@ def index():
     city_data = City.query.with_entities(
         City.city_name, City.latitude, City.longitude
     ).limit(10)
-    
+
     distances_with_names = []
-    
+
     for city_info in city_data:
         city_name, lat, lng = city_info
         distance = distances.calculate_distances(lat, lng)
